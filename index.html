@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <title>Target Practice Game</title>
+</head>
+<body>
+    <a-scene>
+        <!-- Floor -->
+        <a-plane 
+            position="0 0 0" 
+            rotation="-90 0 0" 
+            width="20" 
+            height="20" 
+            color="#2E8B57" 
+            shadow>
+        </a-plane>
+
+        <!-- Basic lighting -->
+        <a-light type="ambient" color="#404040"></a-light>
+        <a-light type="point" position="0 10 0" color="#ffffff"></a-light>
+
+        <!-- Camera (your viewpoint) -->
+        <a-camera position="0 1.6 5" look-controls wasd-controls></a-camera>
+    </a-scene>
+</body>
+</html>
