@@ -1,27 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <title>Target Practice Game</title>
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
 </head>
 <body>
-    <a-scene>
-        <!-- Floor -->
-        <a-plane 
-            position="0 0 0" 
-            rotation="-90 0 0" 
-            width="20" 
-            height="20" 
-            color="#2E8B57" 
-            shadow>
-        </a-plane>
+  <a-scene>
+    <!-- Sky background -->
+    <a-sky color="#87CEEB"></a-sky>
+    
+    <!-- Ground -->
+    <a-plane position="0 0 -4" rotation="-90 0 0" width="20" height="20" color="#228B22"></a-plane>
+    
+    <!-- Camera with cursor for aiming -->
+    <a-camera position="0 1.6 0">
+      <a-cursor 
+        color="yellow"
+        opacity="0.8"
+        raycaster="objects: .target"
+        geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02">
+      </a-cursor>
+    </a-camera>
+    
+    <!-- Target 1 - Red circle -->
+    <a-circle 
+      id="target1"
+      position="-2 2 -5" 
+      radius="0.8" 
+      color="red"
+      class="target"
+      clickable>
+    </a-circle>
 
-        <!-- Basic lighting -->
-        <a-light type="ambient" color="#404040"></a-light>
-        <a-light type="point" position="0 10 0" color="#ffffff"></a-light>
+    <!-- Target 2 - Blue circle -->
+    <a-circle 
+      id="target2"
+      position="2 3 -6" 
+      radius="0.6" 
+      color="blue"
+      class="target"
+      clickable>
+    </a-circle>
 
-        <!-- Camera (your viewpoint) -->
-        <a-camera position="0 1.6 5" look-controls wasd-controls></a-camera>
-    </a-scene>
+    <!-- Target 3 - Green circle -->
+    <a-circle 
+      id="target3"
+      position="0 2.5 -7" 
+      radius="0.7" 
+      color="green"
+      class="target"
+      clickable>
+    </a-circle>
+  </a-scene>
+
+  <script>
+    // When targets are clicked/gazed at
+    document.querySelectorAll('.target').forEach(target => {
+      target.addEventListener('click', function() {
+        // Make target disappear when hit
+        this.setAttribute('visible', false);
+        
+        // Optional: Add a hit sound or effect here
+        console.log('Target hit!');
+        
+        // Respawn target after 2 seconds
+        setTimeout(() => {
+          this.setAttribute('visible', true);
+        }, 2000);
+      });
+    });
+  </script>
 </body>
 </html>
