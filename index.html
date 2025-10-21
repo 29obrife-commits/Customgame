@@ -21,72 +21,86 @@
       </a-cursor>
     </a-camera>
     
-    <!-- Target 1 - Red circle (moves side to side) -->
+    <!-- Target 1 - Red circle -->
     <a-circle 
       id="target1"
       position="-2 2 -5" 
       radius="0.8" 
       color="red"
       class="target"
-      clickable
-      animation="property: position; 
-                 to: 2 2 -5; 
-                 dur: 3000; 
-                 direction: alternate; 
-                 loop: true">
+      clickable>
     </a-circle>
 
-    <!-- Target 2 - Blue circle (moves up and down) -->
+    <!-- Target 2 - Blue circle -->
     <a-circle 
       id="target2"
-      position="2 1 -6" 
+      position="2 3 -6" 
       radius="0.6" 
       color="blue"
       class="target"
-      clickable
-      animation="property: position; 
-                 to: 2 4 -6; 
-                 dur: 2500; 
-                 direction: alternate; 
-                 loop: true">
+      clickable>
     </a-circle>
 
-    <!-- Target 3 - Green circle (moves in a circle) -->
+    <!-- Target 3 - Green circle -->
     <a-circle 
       id="target3"
       position="0 2.5 -7" 
       radius="0.7" 
       color="green"
       class="target"
-      clickable
-      animation__x="property: position; 
-                    to: 1.5 2.5 -7; 
-                    dur: 2000; 
-                    direction: alternate; 
-                    loop: true"
-      animation__y="property: position; 
-                    to: 0 3.5 -7; 
-                    dur: 1500; 
-                    direction: alternate; 
-                    loop: true">
+      clickable>
     </a-circle>
   </a-scene>
 
   <script>
+    // Function to get random position
+    function getRandomPosition() {
+      const x = (Math.random() - 0.5) * 8; // Random between -4 and 4
+      const y = Math.random() * 3 + 1;     // Random between 1 and 4
+      const z = Math.random() * -3 - 4;    // Random between -4 and -7
+      return `${x} ${y} ${z}`;
+    }
+
+    // Function to get random color
+    function getRandomColor() {
+      const colors = ['red', 'blue', 'green', 'orange', 'purple', 'yellow', 'pink'];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
     // When targets are clicked/gazed at
     document.querySelectorAll('.target').forEach(target => {
       target.addEventListener('click', function() {
         // Make target disappear when hit
         this.setAttribute('visible', false);
         
-        console.log('Moving target hit!');
+        console.log('Target hit at random location!');
         
-        // Respawn target after 2 seconds
+        // Respawn target after 1 second at random position
         setTimeout(() => {
+          // Set random position
+          this.setAttribute('position', getRandomPosition());
+          
+          // Set random color
+          this.setAttribute('color', getRandomColor());
+          
+          // Make visible again
           this.setAttribute('visible', true);
-        }, 2000);
+        }, 1000);
       });
     });
+
+    // Make targets move to random positions every few seconds
+    setInterval(() => {
+      document.querySelectorAll('.target').forEach(target => {
+        if (target.getAttribute('visible')) {
+          target.setAttribute('animation', `
+            property: position; 
+            to: ${getRandomPosition()}; 
+            dur: 2000
+          `);
+        }
+      });
+    }, 4000); // Move every 4 seconds
   </script>
 </body>
 </html>
