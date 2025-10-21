@@ -21,34 +21,54 @@
       </a-cursor>
     </a-camera>
     
-    <!-- Target 1 - Red circle -->
+    <!-- Target 1 - Red circle (moves side to side) -->
     <a-circle 
       id="target1"
       position="-2 2 -5" 
       radius="0.8" 
       color="red"
       class="target"
-      clickable>
+      clickable
+      animation="property: position; 
+                 to: 2 2 -5; 
+                 dur: 3000; 
+                 direction: alternate; 
+                 loop: true">
     </a-circle>
 
-    <!-- Target 2 - Blue circle -->
+    <!-- Target 2 - Blue circle (moves up and down) -->
     <a-circle 
       id="target2"
-      position="2 3 -6" 
+      position="2 1 -6" 
       radius="0.6" 
       color="blue"
       class="target"
-      clickable>
+      clickable
+      animation="property: position; 
+                 to: 2 4 -6; 
+                 dur: 2500; 
+                 direction: alternate; 
+                 loop: true">
     </a-circle>
 
-    <!-- Target 3 - Green circle -->
+    <!-- Target 3 - Green circle (moves in a circle) -->
     <a-circle 
       id="target3"
       position="0 2.5 -7" 
       radius="0.7" 
       color="green"
       class="target"
-      clickable>
+      clickable
+      animation__x="property: position; 
+                    to: 1.5 2.5 -7; 
+                    dur: 2000; 
+                    direction: alternate; 
+                    loop: true"
+      animation__y="property: position; 
+                    to: 0 3.5 -7; 
+                    dur: 1500; 
+                    direction: alternate; 
+                    loop: true">
     </a-circle>
   </a-scene>
 
@@ -59,8 +79,7 @@
         // Make target disappear when hit
         this.setAttribute('visible', false);
         
-        // Optional: Add a hit sound or effect here
-        console.log('Target hit!');
+        console.log('Moving target hit!');
         
         // Respawn target after 2 seconds
         setTimeout(() => {
