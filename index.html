@@ -8,6 +8,7 @@
       position: fixed;
       font-family: Arial, sans-serif;
       z-index: 1000;
+      color: white;
     }
 
     #startScreen {
@@ -15,12 +16,11 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.9);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      color: white;
     }
 
     #gameOverScreen {
@@ -28,19 +28,17 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.9);
       display: none;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      color: white;
     }
 
     #scoreDisplay {
       top: 20px;
       left: 20px;
       font-size: 24px;
-      color: white;
       background: rgba(0, 0, 0, 0.7);
       padding: 10px 20px;
       border-radius: 10px;
@@ -51,63 +49,56 @@
       top: 20px;
       right: 20px;
       font-size: 24px;
-      color: white;
       background: rgba(0, 0, 0, 0.7);
       padding: 10px 20px;
       border-radius: 10px;
       display: none;
     }
 
-    .game-button {
+    .start-button {
       background: #4CAF50;
       border: none;
       color: white;
-      padding: 15px 32px;
-      font-size: 18px;
-      margin: 10px;
+      padding: 20px 40px;
+      font-size: 24px;
       cursor: pointer;
       border-radius: 10px;
+      margin-top: 20px;
     }
 
-    .game-button:hover {
+    .start-button:hover {
       background: #45a049;
     }
 
     h1 {
       font-size: 48px;
-      margin-bottom: 20px;
+      text-align: center;
     }
 
-    .instructions {
-      text-align: center;
+    .final-score {
+      font-size: 36px;
       margin: 20px;
-      font-size: 18px;
     }
   </style>
 </head>
 <body>
   <!-- Start Screen -->
   <div id="startScreen" class="game-ui">
-    <h1>🎯 Target Practice</h1>
-    <div class="instructions">
-      <p>Aim with your mouse and click to shoot targets!</p>
-      <p>Small targets = More points</p>
-      <p>You have 60 seconds - Good luck!</p>
-    </div>
-    <button class="game-button" onclick="startGame()">Start Game</button>
+    <h1>Target Practice Game</h1>
+    <p>Shoot the moving targets!</p>
+    <button class="start-button" onclick="startGame()">START</button>
   </div>
 
   <!-- Game Over Screen -->
   <div id="gameOverScreen" class="game-ui">
-    <h1>🎮 Game Over!</h1>
-    <div id="finalScore" style="font-size: 36px; margin: 20px;"></div>
-    <div id="highScoreDisplay" style="font-size: 24px; margin: 10px;"></div>
-    <button class="game-button" onclick="startGame()">Play Again</button>
+    <h1>Game Over!</h1>
+    <div id="finalScore" class="final-score"></div>
+    <button class="start-button" onclick="restartGame()">Play Again</button>
   </div>
 
   <!-- Game UI -->
   <div id="scoreDisplay" class="game-ui">Score: 0</div>
-  <div id="timerDisplay" class="game-ui">Time: 60</div>
+  <div id="timerDisplay" class="game-ui">Time: 2:00</div>
 
   <a-scene>
     <!-- Sky background -->
@@ -116,7 +107,7 @@
     <!-- Ground -->
     <a-plane position="0 0 -4" rotation="-90 0 0" width="20" height="20" color="#228B22"></a-plane>
     
-    <!-- Camera with cursor for aiming -->
+    <!-- Camera with cursor -->
     <a-camera position="0 1.6 0">
       <a-cursor 
         color="yellow"
@@ -126,7 +117,7 @@
       </a-cursor>
     </a-camera>
     
-    <!-- Target 1 -->
+    <!-- Targets -->
     <a-circle 
       id="target1"
       position="-2 2 -5" 
@@ -137,7 +128,6 @@
       visible="false">
     </a-circle>
 
-    <!-- Target 2 -->
     <a-circle 
       id="target2"
       position="2 3 -6" 
@@ -148,7 +138,6 @@
       visible="false">
     </a-circle>
 
-    <!-- Target 3 -->
     <a-circle 
       id="target3"
       position="0 2.5 -7" 
@@ -163,11 +152,10 @@
   <script>
     // Game variables
     let score = 0;
-    let timeLeft = 60;
+    let timeLeft = 120; // 2 minutes = 120 seconds
     let gameActive = false;
     let gameTimer;
     let moveTimer;
-    let highScore = localStorage.getItem('targetGameHighScore') || 0;
 
     // UI elements
     const startScreen = document.getElementById('startScreen');
@@ -175,18 +163,16 @@
     const scoreDisplay = document.getElementById('scoreDisplay');
     const timerDisplay = document.getElementById('timerDisplay');
     const finalScore = document.getElementById('finalScore');
-    const highScoreDisplay = document.getElementById('highScoreDisplay');
 
     // Start the game
     function startGame() {
-      // Reset game state
+      // Reset everything
       score = 0;
-      timeLeft = 60;
+      timeLeft = 120;
       gameActive = true;
 
-      // Hide screens and show game UI
+      // Hide start screen, show game UI
       startScreen.style.display = 'none';
-      gameOverScreen.style.display = 'none';
       scoreDisplay.style.display = 'block';
       timerDisplay.style.display = 'block';
 
@@ -197,18 +183,18 @@
         target.setAttribute('color', getRandomColor());
       });
 
-      // Start game timer
-      updateDisplay();
+      // Start countdown timer
+      updateTimer();
       gameTimer = setInterval(() => {
         timeLeft--;
-        updateDisplay();
+        updateTimer();
         
         if (timeLeft <= 0) {
           endGame();
         }
       }, 1000);
 
-      // Start target movement
+      // Start moving targets
       moveTimer = setInterval(() => {
         if (gameActive) {
           document.querySelectorAll('.target').forEach(target => {
@@ -232,40 +218,32 @@
       clearInterval(gameTimer);
       clearInterval(moveTimer);
 
-      // Hide targets and game UI
+      // Hide everything
       document.querySelectorAll('.target').forEach(target => {
         target.setAttribute('visible', false);
       });
       scoreDisplay.style.display = 'none';
       timerDisplay.style.display = 'none';
 
-      // Update high score
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem('targetGameHighScore', highScore);
-      }
-
-      // Show game over screen
-      finalScore.textContent = `Final Score: ${score}`;
-      highScoreDisplay.textContent = `High Score: ${highScore}`;
+      // Show game over screen with final score
+      finalScore.textContent = `Your Score: ${score}`;
       gameOverScreen.style.display = 'flex';
     }
 
-    // Update score and timer display
-    function updateDisplay() {
-      scoreDisplay.textContent = `Score: ${score}`;
-      timerDisplay.textContent = `Time: ${timeLeft}`;
+    // Restart game
+    function restartGame() {
+      gameOverScreen.style.display = 'none';
+      startGame();
     }
 
-    // Update score
-    function updateScore(points) {
-      if (gameActive) {
-        score += points;
-        updateDisplay();
-      }
+    // Update timer display (show minutes:seconds)
+    function updateTimer() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      timerDisplay.textContent = `Time: ${minutes}:${seconds.toString().padStart(2, '0')}`;
     }
 
-    // Get random position
+    // Random position for targets
     function getRandomPosition() {
       const x = (Math.random() - 0.5) * 8;
       const y = Math.random() * 3 + 1;
@@ -273,18 +251,10 @@
       return `${x} ${y} ${z}`;
     }
 
-    // Get random color
+    // Random colors
     function getRandomColor() {
       const colors = ['red', 'blue', 'green', 'orange', 'purple', 'yellow', 'pink'];
       return colors[Math.floor(Math.random() * colors.length)];
-    }
-
-    // Get points based on target size
-    function getPointsForTarget(target) {
-      const radius = parseFloat(target.getAttribute('radius'));
-      if (radius <= 0.6) return 15;
-      if (radius <= 0.7) return 10;
-      return 5;
     }
 
     // Target click events
@@ -292,17 +262,18 @@
       target.addEventListener('click', function() {
         if (!gameActive) return;
 
-        const points = getPointsForTarget(this);
-        updateScore(points);
+        // Add 10 points for each hit
+        score += 10;
+        scoreDisplay.textContent = `Score: ${score}`;
         
+        // Hide target temporarily
         this.setAttribute('visible', false);
         
+        // Respawn target after short delay
         setTimeout(() => {
           if (gameActive) {
             this.setAttribute('position', getRandomPosition());
             this.setAttribute('color', getRandomColor());
-            const newRadius = Math.random() * 0.4 + 0.5;
-            this.setAttribute('radius', newRadius);
             this.setAttribute('visible', true);
           }
         }, 800);
